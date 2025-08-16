@@ -26,7 +26,21 @@ class TodoApp {
         this.addTask();
       }
     });
-    
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "/") {
+        e.preventDefault(); // prevent default browser behavior for "/"
+        this.taskInput.focus();
+      }
+    });
+
+    this.taskInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.taskInput.value = "";
+        this.taskInput.blur();
+      }
+    });
+
     // modal events
     this.saveEditBtn.addEventListener("click", () => this.saveEdit());
     this.cancelEditBtn.addEventListener("click", () => this.closeModal());
