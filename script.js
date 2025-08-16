@@ -27,17 +27,17 @@ class TodoApp {
       }
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "/") {
-        e.preventDefault(); // prevent default browser behavior for "/"
-        this.taskInput.focus();
-      }
-    });
-
     this.taskInput.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         this.taskInput.value = "";
         this.taskInput.blur();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "/") {
+        e.preventDefault(); // prevent default browser behavior for "/"
+        this.taskInput.focus();
       }
     });
 
@@ -56,6 +56,12 @@ class TodoApp {
     this.editTaskInput.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
         this.saveEdit();
+      }
+    });
+
+    this.editTaskInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.closeModal();
       }
     });
   }
