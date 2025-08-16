@@ -100,18 +100,6 @@ body {
   align-items: center;
   justify-content: space-between;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 .task-item:hover {
@@ -122,6 +110,13 @@ body {
   background: #d4edda;
   border-left-color: #28a745;
   opacity: 0.8;
+}
+
+.task-item.selected {
+  /* background: #ffffff; */
+  border-bottom: 3px solid #ff3ed5;
+  border-left-color: #ff3ed5;
+  /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); */
 }
 
 .task-content {

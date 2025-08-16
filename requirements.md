@@ -13,12 +13,11 @@
 
 # Next Steps
 - Improve accessability
-    - [] Keyboard Navigation
+    - Keyboard Navigation
         -- chatGPT suggestions
-        - [] Navigate between tasks using arrow keys
-        - [] Mark tasks as complete/incomplete with a keyboard shortcut
-        - [] Delete tasks using a keyboard shortcut
-        - [] Add new tasks with a specific key combination
+        - [✔] Navigate between tasks using arrow keys
+        - [✔] Mark tasks as complete/incomplete with a keyboard shortcut
+        - [✔] Delete tasks using a keyboard shortcut
         - [] Toggle dark mode with a keyboard shortcut
         - [✔] Focus on the input field with a shortcut
     - [] ARIA roles and labels
@@ -28,4 +27,4 @@
 - [] Due Dates
 - [] Categories and tags
 - [] Priority Levels
-- [] Task Editing
+- [✔] Task Editing
