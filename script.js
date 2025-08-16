@@ -1,7 +1,9 @@
 class TodoApp {
   constructor() {
     this.tasks = [];
-    this.currentEditingTaskId = null;
+    this.currentSelectedTaskId = null;
+    this.isSelectingFromFinished = false;
+    this.isModalOpen = false;
 
     this.taskInput = document.getElementById("taskInput");
     this.addTaskBtn = document.getElementById("addTaskBtn");
@@ -26,7 +28,70 @@ class TodoApp {
         this.addTask();
       }
     });
-    
+
+    this.taskInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.taskInput.value = "";
+        this.taskInput.blur();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "/") {
+        e.preventDefault(); // prevent default browser behavior for "/"
+        if (this.isModalOpen) {
+          this.editTaskInput.focus();
+        } else {
+          this.taskInput.focus();
+        }
+      }
+    });
+
+    // navigate tasks through arrow keys
+    document.addEventListener("keydown", (e) => {
+      if (this.isModalOpen) return;
+
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        this.isSelectingFromFinished = !this.isSelectingFromFinished;
+        this.selectNextTask(1);
+        this.renderTasks();
+      }
+    });
+    document.addEventListener("keydown", (e) => {
+      if (this.isModalOpen) return;
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        this.selectNextTask(-1);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        this.selectNextTask(1);
+      }
+    });
+
+    // task selection events
+    // toggle task
+    document.addEventListener("keydown", (e) => {
+      if (e.key === " " && this.currentSelectedTaskId && !this.isModalOpen) {
+        e.preventDefault();
+        this.toggleTask(this.currentSelectedTaskId);
+      }
+    });
+    // edit task
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "e" && this.currentSelectedTaskId) {
+        e.preventDefault();
+        this.editTask(this.currentSelectedTaskId);
+      }
+    });
+    // delete task
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "d" && this.currentSelectedTaskId) {
+        e.preventDefault();
+        this.deleteTask(this.currentSelectedTaskId);
+      }
+    });
+
     // modal events
     this.saveEditBtn.addEventListener("click", () => this.saveEdit());
     this.cancelEditBtn.addEventListener("click", () => this.closeModal());
@@ -44,11 +109,32 @@ class TodoApp {
         this.saveEdit();
       }
     });
+
+    this.editTaskInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        this.closeModal();
+      }
+    });
   }
 
   // unique ID for tasks
   generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+  selectNextTask(num) {
+    let currentTasks = [];
+    if (this.isSelectingFromFinished) {
+      currentTasks = this.tasks.filter((task) => task.completed);
+    } else {
+      currentTasks = this.tasks.filter((task) => !task.completed);
+    }
+    const currentIndex = currentTasks.findIndex(
+      (task) => task.id === this.currentSelectedTaskId
+    );
+    const previousIndex =
+      (currentIndex + num + currentTasks.length) % currentTasks.length;
+    this.currentSelectedTaskId = currentTasks[previousIndex].id;
+    this.renderTasks();
   }
 
   addTask() {
@@ -82,6 +168,7 @@ class TodoApp {
 
     if (task) {
       task.completed = !task.completed;
+      this.isSelectingFromFinished = !this.isSelectingFromFinished;
 
       if (task.completed) {
         task.completedAt = new Date().toISOString();
@@ -110,7 +197,8 @@ class TodoApp {
     const task = this.tasks.find((t) => t.id === taskId);
 
     if (task) {
-      this.currentEditingTaskId = taskId;
+      this.isModalOpen = true;
+      this.currentSelectedTaskId = taskId;
       this.editTaskInput.value = task.text;
       this.editModal.style.display = "block"; // instead of none
       this.editTaskInput.focus();
@@ -129,7 +217,7 @@ class TodoApp {
 
     // find and update task
     const task = this.tasks.find(
-      (task) => task.id === this.currentEditingTaskId
+      (task) => task.id === this.currentSelectedTaskId
     );
     if (task) {
       task.text = newText;
@@ -143,8 +231,8 @@ class TodoApp {
   }
 
   closeModal() {
+    this.isModalOpen = false;
     this.editModal.style.display = "none";
-    this.currentEditingTaskId = null;
     this.editTaskInput.value = "";
   }
 
@@ -189,7 +277,9 @@ class TodoApp {
 
   createTaskElement(task, isFinished) {
     const li = document.createElement("li");
-    li.className = `task-item ${isFinished ? "finished" : ""}`;
+    li.className = `task-item ${isFinished ? "finished" : "not-finished"} ${
+      this.currentSelectedTaskId === task.id ? "selected" : "not-selected"
+    }`;
 
     li.innerHTML = `
             <div class="task-content">
